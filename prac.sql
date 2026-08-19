@@ -27,3 +27,12 @@ DROP FOREIGN KEY fk_person;
 ALTER TABLE person MODIFY person_id SMALLINT UNSIGNED AUTO_INCREMENT;
 SELECT * FROM fav_food;
 SELECT version(),user(),database();
+SELECT DISTINCT actor_id FROM film_actor ORDER BY actor_id;
+---   Find all active customers whose first name starts with 'A' and last name ends with 'N'.
+---   Show: customer_id, first_name, last_name, email
+SELECT c.customer_id, c.first_name, c.last_name, c.email
+FROM customer c WHERE c.first_name LIKE 'A%' AND c.last_name LIKE '%N';
+-- 2. List films with length between 90 and 120 minutes (inclusive) that have rental_rate = 2.99.
+--    Order by length DESC, then title.
+--    Show: film_id, title, length, rental_rate
+
