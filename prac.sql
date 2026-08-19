@@ -35,4 +35,6 @@ FROM customer c WHERE c.first_name LIKE 'A%' AND c.last_name LIKE '%N';
 -- 2. List films with length between 90 and 120 minutes (inclusive) that have rental_rate = 2.99.
 --    Order by length DESC, then title.
 --    Show: film_id, title, length, rental_rate
-
+SELECT film_id, title, length, rental_rate FROM film 
+WHERE (length BETWEEN 90 AND 120) AND (rental_rate=2.99)
+ORDER BY length DESC,title LIMIT 20;
