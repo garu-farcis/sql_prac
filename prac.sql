@@ -15,5 +15,15 @@ CONSTRAINT pk_person PRIMARY KEY (person_id)
 );
 INSERT INTO person (person_id, fname, lname, eye_color, birth_date)VALUES (1, 'William','Turner', 'BR', '1972-05-27');
 SELECT * FROM person;
-
-
+CREATE TABLE fav_food(
+    person_name VARCHAR(20),
+    person_id SMALLINT UNSIGNED,
+    food VARCHAR(20),
+    CONSTRAINT pk_fav_food PRIMARY KEY (person_id, food),
+    CONSTRAINT fk_person FOREIGN KEY (person_id) REFERENCES person(person_id)
+);
+ALTER TABLE fav_food 
+DROP FOREIGN KEY fk_person;
+ALTER TABLE person MODIFY person_id SMALLINT UNSIGNED AUTO_INCREMENT;
+SELECT * FROM fav_food;
+SELECT version(),user(),database();
