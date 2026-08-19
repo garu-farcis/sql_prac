@@ -14,4 +14,6 @@ postal_code VARCHAR(20),
 CONSTRAINT pk_person PRIMARY KEY (person_id)
 );
 INSERT INTO person (person_id, fname, lname, eye_color, birth_date)VALUES (1, 'William','Turner', 'BR', '1972-05-27');
-sELECT * FROM person;
+SELECT * FROM person;
+
+
