@@ -38,3 +38,9 @@ FROM customer c WHERE c.first_name LIKE 'A%' AND c.last_name LIKE '%N';
 SELECT film_id, title, length, rental_rate FROM film 
 WHERE (length BETWEEN 90 AND 120) AND (rental_rate=2.99)
 ORDER BY length DESC,title LIMIT 20;
+-- 3. Find all films whose rating is NOT in ('G', 'PG').
+--    Show: title, rating, replacement_cost
+SELECT title, rating, replacement_cost FROM film WHERE rating NOT IN ('G', 'PG');
+-- 4. Actors whose last name contains 'ER' and first name does NOT start with 'J'.
+--    Show: actor_id, first_name, last_name
+SELECT actor_id, first_name, last_name FROM actor WHERE (last_name LIKE '%ER%') AND (first_name NOT LIKE 'J%');
