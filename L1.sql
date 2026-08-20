@@ -20,3 +20,22 @@ group by cust.customer_id order by total_amount_paid DESC limit 10;
 --    full name and the exact number of films they appeared in, ordered by
 --    number of films descending.
 
+select concat(act.full_name,' ',act.last_name) as full_name,count(flm.film_id) as no_of_films
+from film flm inner join film_actor flac
+on flm.film_id = flac.film_id
+inner join actor ac
+on ac.actor_id=flac.actor_id
+group by full_name having count(flm.film_id)> 30 order by no_of_films desc;
+
+-- 4. Identify films that have never been rented. Display the film ID, title,
+--    and release year of these films.
+SELECT
+    fl.film_id,
+    fl.title,
+    fl.release_year
+FROM film fl
+LEFT JOIN inventory inv
+    ON fl.film_id = inv.film_id
+LEFT JOIN rental ren
+    ON inv.inventory_id = ren.inventory_id
+WHERE ren.rental_id IS NULL;
