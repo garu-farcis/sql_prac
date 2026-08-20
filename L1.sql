@@ -8,3 +8,15 @@ ON fc.film_id=f.film_id
 GROUP BY fc.category_id
 HAVING COUNT (f.film_id)>60 ORDER BY average_rental_rate;
 
+-- 2. Find the top 10 customers who have spent the most money in total.
+--    Display their customer ID, full name, total amount paid, and number of
+--    payments. Rank them from highest to lowest spending.
+
+select pay.customer_id,concat(cust.last_name, ', ', cust.first_name) full_name, SUM(pay.amount) AS total_amount_paid,count(pay.payment_id) as no_of_payments
+from customer cust inner join payment pay on cust.customer_id=pay.customer_id
+group by cust.customer_id order by total_amount_paid DESC limit 10;
+
+-- 3. List every actor who has appeared in more than 30 films. Show the actor’s
+--    full name and the exact number of films they appeared in, ordered by
+--    number of films descending.
+
