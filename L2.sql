@@ -46,18 +46,69 @@ and fl.rental_rate >(
 -- 3. Show the first name, last name, and total amount paid by each customer
 --    who has spent more than $150 in total. Order the results from highest
 --    to lowest spender.
+select cust.first_name , cust.last_name , sum(pay.amount) as total_amount
+from customer cust inner join payment pay 
+on cust.customer_id=pay.customer_id
+group by cust.first_name , cust.last_name 
+having sum(pay.amount) > 150
+order by sum(pay.amount) desc;
+
 
 -- 4. Find the titles of all films that have never been rented by any customer.
 
+select fl.title as titles
+from film fl inner join inventory inv
+on inv.film_id=fl.film_id
+inner join rental ren 
+on ren.inventory_id=inv.inventory_id
+where ren.rental_date is null;
+
 -- 5. Display the actor’s full name and the number of films they have appeared
 --    in. Only include actors who have worked in more than 20 films.
+select concat(act.first_name,' ',act.last_name) as full_name, count(fl.film_id) as no_of_films
+from film_actor ft inner join film fl
+on ft.film_id =fl.film_id
+inner join actor act
+on act.actor_id=ft.actor_id
+group by ft.actor_id
+having count(fl.film_id)>20 ;
+
 
 -- 6. List every film that is available in store 1 but is not available in
 --    store 2. Show the film ID and title.
 
+select fl.film_id, fl.title
+from film fl inner join inventory inv
+on inv.film_id =fl.film_id 
+inner join store st
+on st.store_id=inv.store_id
+group by fl.film_id
+having SUM(st.store_id = 1) > 0
+   AND SUM(st.store_id = 2) = 0;
+
+
 -- 7. Retrieve the customer ID and full name of customers who have rented at
 --    least one film from the “Horror” category and at least one film from
 --    the “Comedy” category.
+
+SELECT
+    cust.customer_id,
+    CONCAT(cust.first_name, ' ', cust.last_name) AS full_name
+FROM customer cust
+INNER JOIN payment pay
+    ON cust.customer_id = pay.customer_id
+INNER JOIN rental ren
+    ON ren.rental_id = pay.rental_id
+INNER JOIN inventory inv
+    ON inv.inventory_id = ren.inventory_id
+INNER JOIN film_category fc
+    ON fc.film_id = inv.film_id
+INNER JOIN category cat
+    ON cat.category_id = fc.category_id
+GROUP BY cust.customer_id, cust.first_name, cust.last_name
+HAVING SUM(cat.name = 'Horror') > 0
+   AND SUM(cat.name = 'Comedy') > 0;
+
 
 -- 8. Show the title, length, and category name of all films that are longer
 --    than the longest film in the “Animation” category.
