@@ -11,11 +11,37 @@ USE sakila;
 
 -- 1. Retrieve the full name and email of every customer who lives in a city
 --    that belongs to the country “United States”.
-
+select concat(cust.first_name,' ',cust.last_name) as full_name, cust.email as email
+from customer cust inner join address ad
+on cust.address_id=ad.address_id
+where ad.city_id in (
+    select ci.country_id
+    from address ad1 inner join city ci
+    on ad1.city_id = ci.city_id
+    inner join country cou
+    on ci.country_id = cou.country_id
+    where cou.country='United States'
+);
 
 
 -- 2. List the title and rental rate of all films that belong to the “Sports”
 --    category and cost more than the average rental rate of all films.
+select fl.title as title, fl.rental_rate as rental_rate, cat.name as category_name
+from film fl inner join film_category fc
+on fl.film_id=fc.film_id
+inner join category cat
+on cat.category_id=fc.category_id
+where cat.name in (
+    select cat1.name
+    from category cat1 inner join film_category fc1
+    on cat1.category_id=fc1.category_id
+    group by cat1.name
+    having cat1.name='Sports'
+) 
+and fl.rental_rate >(
+    SELECT AVG(rental_rate)
+    FROM film
+);
 
 -- 3. Show the first name, last name, and total amount paid by each customer
 --    who has spent more than $150 in total. Order the results from highest
