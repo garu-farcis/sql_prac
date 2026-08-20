@@ -39,3 +39,14 @@ LEFT JOIN inventory inv
 LEFT JOIN rental ren
     ON inv.inventory_id = ren.inventory_id
 WHERE ren.rental_id IS NULL;
+-- 5. For each store, show the total revenue generated and the number of
+--    distinct customers who have made at least one payment. Sort by total
+--    revenue descending.
+
+select sum(pay.amount) as total_revenue, COUNT(DISTINCT pay.customer_id) as no_of_dist
+from customer cust inner join store st
+on cust.store_id = st.store_id
+inner join payment pay
+on pay.customer_id =cust.customer_id
+group by cust.store_id 
+order by total_revenue desc;
