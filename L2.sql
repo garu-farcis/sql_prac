@@ -209,12 +209,60 @@ WHERE con.country = 'Canada'
       WHERE inv2.film_id = fl.film_id
         AND con2.country = 'Australia'
   );
+
 -- 13. Show the category name and the total number of films in that category
 --     for every category that contains more films than the “Travel” category.
+SELECT
+    cat.name,
+    COUNT(fl.film_id) AS total_films
+FROM film fl
+INNER JOIN film_category fc
+    ON fl.film_id = fc.film_id
+INNER JOIN category cat
+    ON cat.category_id = fc.category_id
+GROUP BY cat.category_id, cat.name
+HAVING COUNT(fl.film_id) > (
+    SELECT COUNT(fl2.film_id)
+    FROM film fl2
+    INNER JOIN film_category fc2
+        ON fl2.film_id = fc2.film_id
+    INNER JOIN category cat2
+        ON cat2.category_id = fc2.category_id
+    WHERE cat2.name = 'Travel'
+);
+
 
 -- 14. List the first name and last name of all actors who have appeared in
 --     films released in 2006 but have not appeared in any films released
 --     before 2006.
+
+SELECT ac.first_name, ac.last_name
+
+FROM actor ac
+INNER JOIN film_actor fa
+    ON fa.actor_id = ac.actor_id
+
+INNER JOIN film fl
+    ON fl.film_id = fa.film_id
+
+WHERE fl.release_year = 2006
+
+AND NOT EXISTS (
+    SELECT fl1.release_year
+
+    FROM actor ac1
+    INNER JOIN film_actor fa1
+        ON fa1.actor_id = ac1.actor_id
+
+    INNER JOIN film fl1
+        ON fl1.film_id = fa1.film_id
+
+    WHERE ac1.actor_id = ac.actor_id
+      AND fl1.release_year < 2006
+)
+
+GROUP BY ac.actor_id, ac.first_name, ac.last_name;
+
 
 -- 15. Find the customer IDs of people who have rented films from store 1
 --     and also rented films from store 2. Present the result as a single
