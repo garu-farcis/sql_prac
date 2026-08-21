@@ -113,14 +113,70 @@ HAVING SUM(cat.name = 'Horror') > 0
 -- 8. Show the title, length, and category name of all films that are longer
 --    than the longest film in the “Animation” category.
 
+select fl.title, fl.length,cat.name
+from film fl inner join film_category fc
+on fc.film_id=fl.film_id
+inner join category cat
+on cat.category_id=fc.category_id
+where fl.length > (
+    select max(f.length) from film f inner join film_category fc1
+on fc1.film_id=f.film_id
+inner join category cat1
+on cat1.category_id=fc1.category_id
+where cat1.name='Animation'
+)
+
+
 -- 9. Find the names of all staff members who have processed more rentals than
 --    the average number of rentals processed by all staff members.
+
+select st.first_name, st.last_name
+from staff st inner join rental ren
+on st.staff_id=ren.staff_id
+group by ren.staff_id,st.first_name, st.last_name
+having count(ren.rental_id) > (
+    select avg(rental_count) FROM (
+        SELECT
+            staff_id,
+            COUNT(rental_id) AS rental_count
+        FROM rental
+        GROUP BY staff_id
+    ) AS staff_rentals
+);
+
 
 -- 10. List the film titles that appear in both the “Action” category and the
 --     “Drama” category.
 
+select fl.title from film fl inner join film_category fc
+on fc.film_id=fl.film_id
+inner join category cat
+on cat.category_id=fc.category_id
+GROUP BY fl.film_id, fl.title
+HAVING
+    SUM(
+        CASE
+            WHEN cat.name = 'Action' THEN 1
+            ELSE 0
+        END
+    ) > 0
+    AND
+    SUM(
+        CASE
+            WHEN cat.name = 'Drama' THEN 1
+            ELSE 0
+        END
+    ) > 0;
+
 -- 11. Display the customer full name and the date of their most recent rental
 --     for every customer who has made at least one rental.
+select concat(cust.first_name,' ',cust.last_name) as full_name,max(ren.rental_date) as rental_date
+from customer cust inner join rental ren
+on ren.customer_id=cust.customer_id
+group by cust.customer_id
+having  ren.rental_date is not null;
+
+
 
 -- 12. Retrieve the titles of films that have been rented by customers living
 --     in “Canada” but have never been rented by customers living in “Australia”.
