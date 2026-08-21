@@ -173,14 +173,42 @@ HAVING
 select concat(cust.first_name,' ',cust.last_name) as full_name,max(ren.rental_date) as rental_date
 from customer cust inner join rental ren
 on ren.customer_id=cust.customer_id
-group by cust.customer_id
-having  ren.rental_date is not null;
-
+group by cust.customer_id;
 
 
 -- 12. Retrieve the titles of films that have been rented by customers living
 --     in “Canada” but have never been rented by customers living in “Australia”.
-
+SELECT DISTINCT fl.title
+FROM film fl
+INNER JOIN inventory inv
+    ON fl.film_id = inv.film_id
+INNER JOIN rental ren
+    ON ren.inventory_id = inv.inventory_id
+INNER JOIN customer cust
+    ON cust.customer_id = ren.customer_id
+INNER JOIN address ad
+    ON cust.address_id = ad.address_id
+INNER JOIN city ci
+    ON ad.city_id = ci.city_id
+INNER JOIN country con
+    ON ci.country_id = con.country_id
+WHERE con.country = 'Canada'
+  AND NOT EXISTS (
+      SELECT 1
+      FROM inventory inv2
+      INNER JOIN rental ren2
+          ON ren2.inventory_id = inv2.inventory_id
+      INNER JOIN customer cust2
+          ON cust2.customer_id = ren2.customer_id
+      INNER JOIN address ad2
+          ON cust2.address_id = ad2.address_id
+      INNER JOIN city ci2
+          ON ad2.city_id = ci2.city_id
+      INNER JOIN country con2
+          ON ci2.country_id = con2.country_id
+      WHERE inv2.film_id = fl.film_id
+        AND con2.country = 'Australia'
+  );
 -- 13. Show the category name and the total number of films in that category
 --     for every category that contains more films than the “Travel” category.
 
