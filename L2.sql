@@ -267,3 +267,15 @@ GROUP BY ac.actor_id, ac.first_name, ac.last_name;
 -- 15. Find the customer IDs of people who have rented films from store 1
 --     and also rented films from store 2. Present the result as a single
 --     column of distinct customer IDs.
+
+select distinct cust.customer_id 
+from customer cust inner join rental ren
+on cust.customer_id= ren.customer_id
+inner join inventory inv
+on inv.inventory_id=ren.inventory_id
+inner join store st
+on st.store_id=inv.store_id
+where st.store_id in (1,2)
+group by cust.customer_id
+having count(distinct st.store_id=2)
+;
