@@ -1,0 +1,85 @@
+-- Active: 1787069770352@@localhost@3306@sakila
+================================================================================
+15 MORE INTERMEDIATE PRACTICE QUESTIONS
+MySQL + Sakila Sample Database
+Topics: Filtering • Joins • Subqueries • Sets
+(Questions only – no solution hints)
+================================================================================
+
+USE sakila;
+
+-- 1. List the full name and email of every active customer who lives in a
+--    city located in “Canada” or “Mexico”.
+
+select cust.first_name,cust.last_name,cust.email
+from customer cust inner join address ad
+on ad.address_id=cust.address_id
+inner join city ci
+on ci.city_id=ad.city_id
+inner join country con
+on con.country_id =ci.country_id
+WHERE cust.active = 1
+AND (con.country = 'Canada' OR con.country = 'Mexico')
+group by cust.first_name,cust.last_name, cust.email 
+;
+
+-- 2. Show the title and length of all films that are shorter than the
+--    shortest film in the “Sci-Fi” category.
+
+select fl.title, fl.length 
+from film fl inner join film_category fc
+on fl.film_id=fc.film_id
+inner join category ca
+on ca.category_id=fc.category_id
+where fl.length<(
+    select min(fl1.length)
+    from film fl1 inner join film_category fc1
+    on fl1.film_id=fc1.film_id
+    inner join category ca1
+    on ca1.category_id=fc1.category_id
+    where ca1.name='Sci-Fi'
+
+)
+group by fl.title, fl.length;
+
+
+-- 3. Find the customer ID and full name of customers who have made more
+--    payments than the average number of payments per customer.
+
+-- 4. Display the film ID and title of every film that has been rented by
+--    at least one customer from store 1 and at least one customer from store 2.
+
+-- 5. Retrieve the actor’s full name and the titles of all films they appeared
+--    in that are rated “PG-13”. Only include actors who have appeared in more
+--    than five such films.
+
+-- 6. List the titles of films that belong to the “Family” category but do not
+--    belong to the “Children” category.
+
+-- 7. Show the full name and total amount spent by every customer who has
+--    rented more films than customer ID 1.
+
+-- 8. Find the staff members who have collected more total revenue than the
+--    staff member with staff_id = 1. Display their full name and total revenue.
+
+-- 9. Retrieve the distinct titles of all films that have been rented by
+--    customers living in “Japan” or by customers living in “China”.
+
+-- 10. List the category names that contain more films than the average number
+--     of films per category.
+
+-- 11. Show the customer ID and full name of customers who have never rented
+--     a film from the “Documentary” category.
+
+-- 12. Display the film titles that appear in the “Music” category or the
+--     “Games” category, but not in both.
+
+-- 13. Find the full names of actors who have appeared in films from every
+--     category that exists in the database.
+
+-- 14. List the rental ID, rental date, and customer full name for every
+--     rental that lasted longer than the average rental duration of all
+--     completed rentals.
+
+-- 15. Retrieve the distinct customer IDs of people who have rented films
+--     released in 2006 and have also rented films released in 2005.
