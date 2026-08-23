@@ -46,6 +46,22 @@ group by fl.title, fl.length;
 -- 3. Find the customer ID and full name of customers who have made more
 --    payments than the average number of payments per customer.
 
+select cust.customer_id,concat(cust.first_name,' ',cust.last_name) as full_name
+from customer cust inner join payment pa
+on pa.customer_id = cust.customer_id
+group by cust.customer_id,cust.first_name,cust.last_name
+having count(pa.payment_id) >(
+    SELECT AVG(payment_count)
+    FROM (
+        SELECT
+            pp.customer_id,
+            COUNT(pp.payment_id) AS payment_count
+        FROM payment pp
+        GROUP BY pp.customer_id
+    ) AS customer_payment_counts
+
+);
+
 -- 4. Display the film ID and title of every film that has been rented by
 --    at least one customer from store 1 and at least one customer from store 2.
 
