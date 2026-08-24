@@ -65,6 +65,18 @@ having count(pa.payment_id) >(
 -- 4. Display the film ID and title of every film that has been rented by
 --    at least one customer from store 1 and at least one customer from store 2.
 
+select fl.film_id, fl.title 
+from film fl inner join inventory inv
+on fl.film_id=inv.film_id
+inner join rental re
+on re.inventory_id=inv.inventory_id
+inner join customer cu
+on cu.customer_id=re.customer_id
+WHERE cu.store_id IN (1, 2)
+GROUP BY fl.film_id, fl.title
+HAVING COUNT(DISTINCT cu.store_id) = 2;
+
+
 -- 5. Retrieve the actor’s full name and the titles of all films they appeared
 --    in that are rated “PG-13”. Only include actors who have appeared in more
 --    than five such films.
