@@ -235,6 +235,22 @@ having count(distinct(cc.name))=1;
 -- 13. Find the full names of actors who have appeared in films from every
 --     category that exists in the database.
 
+select concat(ac.first_name,' ',ac.last_name) as full_name
+from film_category fc inner join category cc
+on cc.category_id=fc.category_id
+inner join film ff
+on ff.film_id=fc.film_id
+inner join film_actor fa
+on fa.film_id =ff.film_id
+inner join actor ac
+on ac.actor_id=fa.actor_id
+group by ac.actor_id,ac.first_name,ac.last_name
+having count(distinct(cc.category_id)) in (
+    select count(*) from category
+)
+;
+
+
 -- 14. List the rental ID, rental date, and customer full name for every
 --     rental that lasted longer than the average rental duration of all
 --     completed rentals.
