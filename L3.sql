@@ -81,11 +81,41 @@ HAVING COUNT(DISTINCT cu.store_id) = 2;
 --    in that are rated “PG-13”. Only include actors who have appeared in more
 --    than five such films.
 
+SELECT 
+    CONCAT(ac.first_name, ' ', ac.last_name) AS full_name,
+    fl.title
+FROM actor ac
+JOIN film_actor fa
+    ON fa.actor_id = ac.actor_id
+JOIN film fl
+    ON fl.film_id = fa.film_id
+WHERE fl.rating = 'PG-13'
+  AND ac.actor_id IN (
+      SELECT fa1.actor_id
+      FROM film_actor fa1
+      JOIN film ff
+          ON ff.film_id = fa1.film_id
+      WHERE ff.rating = 'PG-13'
+      GROUP BY fa1.actor_id
+      HAVING COUNT(*) > 5
+  )
+ORDER BY full_name, fl.title;
+
 -- 6. List the titles of films that belong to the “Family” category but do not
 --    belong to the “Children” category.
 
+select ff.title 
+from film ff inner join film_category fc
+on fc.film_id=ff.film_id
+inner join category ca
+on ca.category_id=fc.category_id
+where ca.name ='Family' and ca.name<>'Children';
+
+
 -- 7. Show the full name and total amount spent by every customer who has
 --    rented more films than customer ID 1.
+
+
 
 -- 8. Find the staff members who have collected more total revenue than the
 --    staff member with staff_id = 1. Display their full name and total revenue.
