@@ -255,5 +255,31 @@ having count(distinct(cc.category_id)) in (
 --     rental that lasted longer than the average rental duration of all
 --     completed rentals.
 
+SELECT 
+    re.rental_id,
+    re.rental_date,
+    CONCAT(cc.first_name, ' ', cc.last_name) AS full_name
+FROM film ff
+INNER JOIN inventory inv
+    ON inv.film_id = ff.film_id
+INNER JOIN rental re
+    ON re.inventory_id = inv.inventory_id
+INNER JOIN customer cc
+    ON cc.customer_id = re.customer_id
+WHERE re.return_date IS NOT NULL
+GROUP BY 
+    re.rental_id,
+    re.rental_date,
+    cc.first_name,
+    cc.last_name,
+    re.return_date
+HAVING DATEDIFF(re.return_date, re.rental_date) > (
+    SELECT AVG(DATEDIFF(ren.return_date, ren.rental_date))
+    FROM rental ren
+    WHERE ren.return_date IS NOT NULL
+);
+
+
+
 -- 15. Retrieve the distinct customer IDs of people who have rented films
 --     released in 2006 and have also rented films released in 2005.
