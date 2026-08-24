@@ -115,19 +115,111 @@ where ca.name ='Family' and ca.name<>'Children';
 -- 7. Show the full name and total amount spent by every customer who has
 --    rented more films than customer ID 1.
 
+select concat(cc.first_name,' ',cc.last_name) as full_name, sum(pp.amount) as total_amount
+from customer cc inner join payment pp
+on pp.customer_id=cc.customer_id
+where cc.customer_id in (
+    select cs.customer_id 
+    from customer cs inner join rental re
+    on re.customer_id=cs.customer_id
+    group by cs.customer_id
+    having count(re.rental_id)>(
+        select count(rental_id) 
+        from rental where customer_id=1))
+group by cc.first_name,cc.last_name
+;
 
 
 -- 8. Find the staff members who have collected more total revenue than the
 --    staff member with staff_id = 1. Display their full name and total revenue.
 
+select concat(cc.first_name,' ',cc.last_name) as full_name, sum(pp.amount) as total_amount
+from staff cc inner join payment pp
+on cc.staff_id=pp.staff_id
+where cc.staff_id in (
+    select ss.staff_id from staff ss inner join payment pa
+    on pa.staff_id=ss.staff_id
+    group by ss.staff_id
+    having sum(pa.amount)>(
+        select sum(p.amount) from payment p inner join staff s
+        on s.staff_id=p.staff_id
+        where s.staff_id=1
+    )
+)
+group by cc.first_name,cc.last_name;
+
+
+
 -- 9. Retrieve the distinct titles of all films that have been rented by
 --    customers living in “Japan” or by customers living in “China”.
+
+select distinct(ff.title) as titles
+from film ff inner join inventory inv
+on inv.film_id=ff.film_id
+inner join rental re
+on re.inventory_id=inv.inventory_id
+where re.rental_id in (
+    select ren.rental_id from rental ren inner join customer cc
+    on cc.customer_id=ren.customer_id
+    inner join address ad
+    on ad.address_id=cc.address_id
+    inner join city ci
+    on ci.city_id=ad.city_id
+    inner join country co
+    on co.country_id=ci.country_id
+    where co.country='Japan' or co.country='China'
+    group by re.rental_id,cc.customer_id
+);
+
 
 -- 10. List the category names that contain more films than the average number
 --     of films per category.
 
+select ca.name as cat_name
+from category ca inner join film_category fc
+on fc.category_id=ca.category_id
+inner join film ff
+on ff.film_id=fc.film_id
+where ca.category_id in (
+    select cc.category_id from category cc inner join film_category fcc
+    on fcc.category_id=cc.category_id 
+    inner join film ff
+    on ff.film_id=fcc.film_id
+    group by cc.category_id
+    having count(ff.film_id)>(
+        select avg(film_count) 
+        FROM (
+            SELECT COUNT(*) AS film_count
+            FROM film_category
+            GROUP BY category_id
+        ) AS counts
+
+    )
+);
+
+
 -- 11. Show the customer ID and full name of customers who have never rented
 --     a film from the “Documentary” category.
+
+select cc.customer_id, concat(cc.first_name,' ',cc.last_name) as full_name
+from customer cc inner join rental re
+on re.customer_id=cc.customer_id
+where re.rental_date is not null 
+
+and not exists (
+    select cu.customer_id from customer cu inner join rental ren
+    on ren.customer_id=cu.customer_id
+    inner join inventory inv
+    on inv.inventory_id=ren.inventory_id
+    inner join film ff
+    on ff.film_id=inv.film_id
+    inner join film_category fc
+    on fc.film_id=ff.film_id
+    inner join category ca
+    on ca.category_id=fc.category_id
+    where ca.name='Documentary'
+)>0
+group by cc.customer_id,cc.first_name,cc.last_name;
 
 -- 12. Display the film titles that appear in the “Music” category or the
 --     “Games” category, but not in both.
