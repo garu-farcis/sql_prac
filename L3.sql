@@ -224,6 +224,14 @@ group by cc.customer_id,cc.first_name,cc.last_name;
 -- 12. Display the film titles that appear in the “Music” category or the
 --     “Games” category, but not in both.
 
+select ff.title from film ff inner join film_category fc
+on fc.film_id=ff.film_id
+inner join category cc
+on cc.category_id=fc.category_id
+where cc.name in ('Music','Games')
+group by ff.film_id,ff.title
+having count(distinct(cc.name))=1;
+
 -- 13. Find the full names of actors who have appeared in films from every
 --     category that exists in the database.
 
