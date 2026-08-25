@@ -283,3 +283,13 @@ HAVING DATEDIFF(re.return_date, re.rental_date) > (
 
 -- 15. Retrieve the distinct customer IDs of people who have rented films
 --     released in 2006 and have also rented films released in 2005.
+select distinct(cc.customer_id )
+from customer cc inner join rental re
+on re.customer_id =cc.customer_id
+inner join inventory inv
+on inv.inventory_id=re.inventory_id
+inner join film ff
+on ff.film_id=inv.film_id
+where ff.release_year in (2005,2006)
+group by re.rental_id,cc.customer_id
+having count(distinct ff.release_year)=2;
