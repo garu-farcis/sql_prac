@@ -20,6 +20,19 @@ having count(*)>150;
 -- 2. Create a single result set that lists all customer full names from
 --    store 1 and all staff full names, clearly indicating whether each
 --    person is a “Customer” or “Staff”.
+SELECT
+    CONCAT(first_name, ' ', last_name) AS full_name,
+    'Customer' AS person_type
+FROM customer
+WHERE store_id = 1
+
+UNION ALL
+
+SELECT
+    CONCAT(first_name, ' ', last_name) AS full_name,
+    'Staff' AS person_type
+FROM staff;
+
 
 -- 3. List the film title and a custom label that reads “Short”, “Medium”,
 --    or “Long” depending on whether the length is under 90 minutes,
