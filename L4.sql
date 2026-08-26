@@ -85,10 +85,14 @@ SELECT
 FROM year_day_calendar;
 
 
--- 6. Convert every film’s rental rate into a percentage of the maximum
---    rental rate in the entire catalog, rounded to two decimal places.
---    Display the title, original rental rate, and the calculated percentage.
-
+-- 6. SELECT
+    select title,
+    rental_rate,
+    ROUND(
+        (rental_rate / (SELECT MAX(rental_rate) FROM film)) * 100,
+        2
+    ) AS rental_rate_percentage
+FROM film;
 
 -- 7. Find the top 5 busiest days of the week (by number of rentals) across
 --    the entire rental history. Display the day name and the rental count.
