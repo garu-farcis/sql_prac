@@ -38,6 +38,8 @@ FROM staff;
 --    or “Long” depending on whether the length is under 90 minutes,
 --    between 90 and 120 minutes, or over 120 minutes.
 
+
+
 -- 4. Show the customer ID, full name, and a column called “status” that
 --    displays “High Value” if the customer has spent more than $150,
 --    “Medium Value” if they spent between $100 and $150, and “Low Value”
