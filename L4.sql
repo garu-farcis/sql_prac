@@ -39,7 +39,16 @@ FROM staff;
 --    between 90 and 120 minutes, or over 120 minutes.
 
 
-
+select title, 
+    (case 
+    when length<=90 then 'Short'
+     when  length>120 then 'Long'
+     when length between 90 and 120 then 'Medium'
+     else 0
+     end 
+    ) as labels
+from film 
+;
 -- 4. Show the customer ID, full name, and a column called “status” that
 --    displays “High Value” if the customer has spent more than $150,
 --    “Medium Value” if they spent between $100 and $150, and “Low Value”
