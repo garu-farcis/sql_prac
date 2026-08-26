@@ -60,7 +60,7 @@ case
  when sum(pp.amount) between 100 and 150 then 'Medium Value'
  when sum(pp.amount) <150 then 'Low Value'
  else 0
- end as stats
+ end as status
 from customer cc inner join payment pp
 on pp.customer_id=cc.customer_id
 group by cc.customer_id,cc.first_name,cc.last_name;
@@ -70,9 +70,25 @@ group by cc.customer_id,cc.first_name,cc.last_name;
 -- 5. Generate a list of the next 12 months starting from the current date,
 --    formatted as “YYYY-MM”, along with a sequential month number from 1 to 12.
 
+with recursive year_day_calendar as (
+    select 
+    curdate() as month_date,
+    1 as month_num
+    union all
+    select date_add(month_date,interval 1 month),month_num+1
+    from year_day_calendar where month_num<12
+
+)
+SELECT
+    DATE_FORMAT(month_date, '%Y-%m') AS month,
+    month_num
+FROM year_day_calendar;
+
+
 -- 6. Convert every film’s rental rate into a percentage of the maximum
 --    rental rate in the entire catalog, rounded to two decimal places.
 --    Display the title, original rental rate, and the calculated percentage.
+
 
 -- 7. Find the top 5 busiest days of the week (by number of rentals) across
 --    the entire rental history. Display the day name and the rental count.
