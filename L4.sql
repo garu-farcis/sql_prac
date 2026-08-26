@@ -54,6 +54,19 @@ from film
 --    “Medium Value” if they spent between $100 and $150, and “Low Value”
 --    otherwise.
 
+select cc.customer_id, concat(cc.first_name,' ',cc.last_name) as full_name,
+case 
+ when sum(pp.amount)>150 then 'High Value'
+ when sum(pp.amount) between 100 and 150 then 'Medium Value'
+ when sum(pp.amount) <150 then 'Low Value'
+ else 0
+ end as stats
+from customer cc inner join payment pp
+on pp.customer_id=cc.customer_id
+group by cc.customer_id,cc.first_name,cc.last_name;
+
+
+
 -- 5. Generate a list of the next 12 months starting from the current date,
 --    formatted as “YYYY-MM”, along with a sequential month number from 1 to 12.
 
