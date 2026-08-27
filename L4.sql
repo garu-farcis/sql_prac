@@ -128,6 +128,17 @@ group by ac.actor_id,ac.first_name,ac.last_name;
 --     characters of the description followed by “...” if the description
 --     is longer than 20 characters; otherwise show the full description.
 
+select title, 
+(
+    case 
+    when length(description)>20 then concat(left(description, 20),'...')
+    when length(description)<20 then description
+    else 0
+    end
+) as descr
+from film;
+
+
 -- 11. Retrieve the customer full name and the number of days between their
 --     first rental and their most recent rental. Only include customers
 --     who have made at least two rentals.
