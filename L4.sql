@@ -180,6 +180,13 @@ having pp.payment_date=(SELECT MIN(p2.payment_date)
 
 -- 14. List the titles of films that have a replacement cost higher than the
 --     average replacement cost of films in the same rating group.
+select f.title
+from film f
+where f.replacement_cost >
+(
+    select avg(replacement_cost) from film f2 where f2.rating=f.rating
+);
+
 
 -- 15. Generate a report that shows, for each year and month in 2005, the
 --     total number of rentals and the running total of rentals up to that
