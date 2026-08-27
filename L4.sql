@@ -96,10 +96,20 @@ FROM film;
 
 -- 7. Find the top 5 busiest days of the week (by number of rentals) across
 --    the entire rental history. Display the day name and the rental count.
+select DAYNAME(rental_date) AS day_name,, count(rental_id) as rental_count
+FROM rental
+GROUP BY DAYOFWEEK(rental_date), DAYNAME(rental_date)
+ORDER BY rental_count DESC
+LIMIT 5;
 
 -- 8. For each store, calculate the total revenue and express it as a
 --    percentage of the company’s overall revenue. Show store ID, total
 --    revenue, and the percentage (rounded to one decimal place).
+
+select cu.store_id,sum(pp.amount) as total_revenue, round(SUM(pp.amount) * 100.0 /(SELECT SUM(amount) FROM payment),1) as revenue_perc
+from customer cu inner join payment pp 
+on cu.customer_id=pp.customer_id
+group by cu.store_id;
 
 -- 9. List every actor’s full name together with a comma-separated list of
 --    the distinct categories of films they have appeared in.
