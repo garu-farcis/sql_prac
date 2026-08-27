@@ -143,6 +143,12 @@ from film;
 --     first rental and their most recent rental. Only include customers
 --     who have made at least two rentals.
 
+select concat(cu.first_name,' ',cu.last_name) as full_name, datediff(max(re.rental_date),min(re.rental_date)) as date_difference
+from customer cu inner join rental re
+on cu.customer_id=re.customer_id
+group by cu.customer_id,cu.first_name,cu.last_name
+having count(rental_id)>=2;
+
 -- 12. Create a ranking of all films by rental rate within each category
 --     (highest rate first). Display category name, film title, rental rate,
 --     and the rank position inside that category.
