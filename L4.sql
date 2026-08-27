@@ -153,9 +153,24 @@ having count(rental_id)>=2;
 --     (highest rate first). Display category name, film title, rental rate,
 --     and the rank position inside that category.
 
+select cat.name as category_name,ff.title,ff.rental_rate, 
+(case
+when ff.rental_rate< 3 then 'low'
+when ff.rental_rate between 1 and 2 then 'medium'
+when ff.rental_rate>3 then 'high'
+else 0
+end) as ranking
+from film ff inner join film_category fc
+on fc.film_id=ff.film_id
+inner join category cat
+on cat.category_id=fc.category_id
+group by ff.film_id,cat.name;
+
 -- 13. Find all payments that were made on the same date as the customer’s
 --     very first payment. Show payment ID, customer full name, amount, and
 --     payment date.
+
+
 
 -- 14. List the titles of films that have a replacement cost higher than the
 --     average replacement cost of films in the same rating group.
