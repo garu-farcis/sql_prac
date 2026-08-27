@@ -114,6 +114,16 @@ group by cu.store_id;
 -- 9. List every actor’s full name together with a comma-separated list of
 --    the distinct categories of films they have appeared in.
 
+select concat(ac.first_name,' ',ac.last_name) as full_name, group_concat(distinct cat.name order by cat.name SEPARATOR ', ') as category_list
+from category cat inner join film_category fc
+on fc.category_id=cat.category_id
+inner join film_actor fa
+on fa.film_id=fc.film_id
+inner join actor ac
+on ac.actor_id=fa.actor_id
+group by ac.actor_id,ac.first_name,ac.last_name;
+
+
 -- 10. Show the film title and a new column that contains the first 20
 --     characters of the description followed by “...” if the description
 --     is longer than 20 characters; otherwise show the full description.
