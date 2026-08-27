@@ -170,7 +170,13 @@ group by ff.film_id,cat.name;
 --     very first payment. Show payment ID, customer full name, amount, and
 --     payment date.
 
-
+select pp.payment_date,concat(cu.first_name,' ',cu.last_name) as full_name,pp.payment_id,pp.amount
+from payment pp inner join customer cu
+on pp.customer_id=cu.customer_id
+group by  pp.customer_id,pp.payment_id
+having pp.payment_date=(SELECT MIN(p2.payment_date)
+    FROM payment p2
+    WHERE p2.customer_id = pp.customer_id);
 
 -- 14. List the titles of films that have a replacement cost higher than the
 --     average replacement cost of films in the same rating group.
