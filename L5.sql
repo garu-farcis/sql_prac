@@ -42,9 +42,27 @@ select * from temp_view1 where loyalty_tier = 'Gold'
 --    each customer (one negative, one positive) and ensures both operations
 --    succeed or both are rolled back. Include proper error handling.
 
+
+
 -- 3. Generate a report that lists every day in August 2005 together with the
 --    number of rentals that occurred on that day. Days with zero rentals
 --    must still appear in the result.
+
+
+with recursive august_days as (
+        select date('2005-08-01') as rent_day
+        union all
+        select date_add(rent_day,interval 1 day)
+        from august_days
+        where rent_day<'2005-08-31'
+)
+select ad.rent_day,
+count(r.rental_id) as rntal_id
+from august_days ad left join rental r
+on date(r.rental_date)=ad.rent_day
+group by ad.rent_day
+order by ad.rent_day;
+
 
 -- 4. For each film category, show the category name, the number of films,
 --    the average rental rate, and a column that displays “Premium” if the
