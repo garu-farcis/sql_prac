@@ -219,7 +219,7 @@ WHERE DATE_FORMAT(rental_date, '%Y %M') = '2005 August';;
 -- 18. Find customers whose last name starts with the same letter as the
 --     first letter of their city name. Show customer full name and city.
 
-select  concat(cu.first_name,' ',cu.last_name),ci.city as city_name
+select  concat(cu.first_name,' ',cu.last_name) as full_name,ci.city as city_name
 from customer cu inner join address ad
 on ad.address_id=cu.address_id
 inner join city ci
@@ -243,3 +243,10 @@ HAVING SUM(ff.rating = 'NC-17') = 0;;
 -- 20. For each customer, show their full name, total amount paid, and a
 --     column that concatenates the word “Customer since” with the year
 --     they were created (e.g., “Customer since 2006”).
+
+select concat(cu.first_name,' ',cu.last_name) as full_name, 
+sum(pay.amount) as total_amount,
+concat('Customer since ',year(cu.create_date)) as cust_since
+from customer cu inner join payment pay 
+on pay.customer_id=cu.customer_id
+group by cu.customer_id, cu.first_name,cu.last_name;
