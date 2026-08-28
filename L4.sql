@@ -191,9 +191,19 @@ where f.replacement_cost >
 -- 15. Generate a report that shows, for each year and month in 2005, the
 --     total number of rentals and the running total of rentals up to that
 --     month.
+select count(re.rental_id) as total_rentals,
 
 -- 16. Display the staff full name and a column that shows “Manager” if the
 --     staff member is the manager of a store, otherwise “Employee”.
+
+select concat(cu.first_name,' ',cu.last_name) as full_name,
+(
+    case
+    when cu.staff_id in (select manager_staff_id from store) then 'Manager'
+    else 'Employee'
+    end
+ ) as staff_type
+ from staff cu;
 
 -- 17. Convert the rental_date of every rental into three separate columns:
 --     year, month name, and day of the month. Only include rentals from
