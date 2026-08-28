@@ -230,6 +230,16 @@ where left(cu.last_name,1)=left(ci.city,1);
 -- 19. Produce a list of all categories that have no films rated “NC-17”.
 --     Display only the category name.
 
+select cat.name
+from category cat inner join film_category fc
+on fc.category_id=cat.category_id
+inner join film ff
+on ff.film_id =fc.film_id
+GROUP BY cat.category_id, cat.name
+HAVING SUM(ff.rating = 'NC-17') = 0;;
+
+
+
 -- 20. For each customer, show their full name, total amount paid, and a
 --     column that concatenates the word “Customer since” with the year
 --     they were created (e.g., “Customer since 2006”).
