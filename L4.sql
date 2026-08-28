@@ -209,8 +209,23 @@ select concat(cu.first_name,' ',cu.last_name) as full_name,
 --     year, month name, and day of the month. Only include rentals from
 --     August 2005.
 
+select year(rental_date) as rental_year,
+month(rental_date) as month_name, 
+day(rental_date) as day_name
+from rental 
+WHERE DATE_FORMAT(rental_date, '%Y %M') = '2005 August';;
+
+
 -- 18. Find customers whose last name starts with the same letter as the
 --     first letter of their city name. Show customer full name and city.
+
+select  concat(cu.first_name,' ',cu.last_name),ci.city as city_name
+from customer cu inner join address ad
+on ad.address_id=cu.address_id
+inner join city ci
+on ci.city_id=ad.city_id
+where left(cu.last_name,1)=left(ci.city,1);
+
 
 -- 19. Produce a list of all categories that have no films rated “NC-17”.
 --     Display only the category name.
