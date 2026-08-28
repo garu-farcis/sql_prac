@@ -244,9 +244,16 @@ HAVING SUM(ff.rating = 'NC-17') = 0;;
 --     column that concatenates the word “Customer since” with the year
 --     they were created (e.g., “Customer since 2006”).
 
+explain
 select concat(cu.first_name,' ',cu.last_name) as full_name, 
 sum(pay.amount) as total_amount,
 concat('Customer since ',year(cu.create_date)) as cust_since
 from customer cu inner join payment pay 
 on pay.customer_id=cu.customer_id
 group by cu.customer_id, cu.first_name,cu.last_name;
+
+
+SELECT table_name, table_type
+FROM information_schema.tables
+WHERE table_schema = 'sakila'
+ORDER BY 1;
