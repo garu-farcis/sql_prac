@@ -57,7 +57,7 @@ with recursive august_days as (
         where rent_day<'2005-08-31'
 )
 select ad.rent_day,
-count(r.rental_id) as rntal_id
+count(r.rental_id) as rental_id
 from august_days ad left join rental r
 on date(r.rental_date)=ad.rent_day
 group by ad.rent_day
