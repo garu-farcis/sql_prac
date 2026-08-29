@@ -89,14 +89,22 @@ on cat.category_id=fc.category_id
 group by cat.category_id;
 
 
-
 -- 5. Find the top 3 customers in each store ranked by total amount paid.
 --    Display store ID, customer full name, total paid, and their rank within
 --    the store.
 
+
+
 -- 6. List all pairs of actors who have appeared together in at least 3 films.
 --    Show both actors’ full names and the number of films they share.
 --    Avoid listing the same pair twice (A-B and B-A).
+
+
+select concat(fa.first_name,' '.fa.last_name) as full_name,
+(
+        select count(film_id) 
+        
+)as no_of_films
 
 -- 7. Convert the special_features column of the film table into a normalized
 --    result set that shows one row per film-feature combination. Display
