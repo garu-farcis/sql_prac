@@ -100,16 +100,26 @@ group by cat.category_id;
 --    Avoid listing the same pair twice (A-B and B-A).
 
 
-select concat(aa.first_name,' ',aa.last_name) as full_name,
-(
-        select count(f.film_id) 
-        from film_actor f
-
-)as no_of_films
-from film_actor fa inner join actor aa
-on aa.actor_id =fa.actor_id
-group by fa.film_id,fa.actor_id,aa.first_name,aa.last_name
-having count(fa.film_id)>3;
+SELECT
+    CONCAT(a1.first_name, ' ', a1.last_name) AS actor_1,
+    CONCAT(a2.first_name, ' ', a2.last_name) AS actor_2,
+    COUNT(*) AS shared_films
+FROM film_actor fa1
+INNER JOIN film_actor fa2
+    ON fa1.film_id = fa2.film_id
+   AND fa1.actor_id < fa2.actor_id
+INNER JOIN actor a1
+    ON fa1.actor_id = a1.actor_id
+INNER JOIN actor a2
+    ON fa2.actor_id = a2.actor_id
+GROUP BY
+    fa1.actor_id,
+    fa2.actor_id,
+    a1.first_name,
+    a1.last_name,
+    a2.first_name,
+    a2.last_name
+HAVING COUNT(*) >= 3;
 
 -- 7. Convert the special_features column of the film table into a normalized
 --    result set that shows one row per film-feature combination. Display
