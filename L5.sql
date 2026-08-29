@@ -69,6 +69,27 @@ order by ad.rent_day;
 --    average rental rate is above the overall average rental rate of all
 --    films, otherwise “Standard”.
 
+select cat.category_id as category,
+cat.name as category_name, 
+count(ff.film_id) as film_count,
+avg(ff.rental_rate) as rental_rate,
+(
+        case
+        when avg(ff.rental_rate)>(
+                select avg(f.rental_rate)
+                from film f
+        ) then 'Premium'
+        else 'Standard'
+        end
+) as tier
+from film ff inner join film_category fc
+on ff.film_id=fc.film_id
+inner join category cat
+on cat.category_id=fc.category_id
+group by cat.category_id;
+
+
+
 -- 5. Find the top 3 customers in each store ranked by total amount paid.
 --    Display store ID, customer full name, total paid, and their rank within
 --    the store.
