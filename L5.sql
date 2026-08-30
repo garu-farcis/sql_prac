@@ -130,6 +130,24 @@ HAVING COUNT(*) >= 3;
 --      • All customer full names who have never made a rental.
 --    Clearly label each row as either “Unrented Film” or “Inactive Customer”.
 
+
+select ff.title AS name,
+    'Unrented Film' AS type
+from film ff 
+left join inventory inv
+on inv.film_id=ff.film_id
+left join rental r
+on r.inventory_id=inv.inventory_id
+where r.rental_date is null
+group by ff.title
+union all
+select concat(cu.first_name,' ',cu.last_name) as name,
+'Inactive Customer' AS type
+from customer cu left join rental re
+on re.customer_id=cu.customer_id
+where re.rental_id is null;
+
+
 -- 9. Write a query that returns the film title, its current inventory count
 --    across all stores, and a status message:
 --      “Out of Stock” if count = 0,
