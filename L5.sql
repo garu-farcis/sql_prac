@@ -154,6 +154,20 @@ where re.rental_id is null;
 --      “Low Stock” if count between 1 and 3,
 --      “In Stock” if count > 3.
 
+select ff.title as title,
+COUNT(inv.inventory_id) AS inv_count,
+(
+        case
+        when count(inv.inventory_id)=0 then 'Out of Stock'
+        when count(inv.inventory_id) between 1 and 3 then 'Low Stock'
+        else 'In Stock'
+        end
+) as status_inv
+from film ff inner join inventory inv 
+on ff.film_id=inv.film_id
+group by ff.title ;
+
+
 -- 10. Inside a transaction, increase the rental_rate of every film in the
 --     “Action” category by 10%, but only if the new rate would not exceed
 --     $5.00. If any film would exceed $5.00, roll back the entire change.
