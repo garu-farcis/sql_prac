@@ -125,6 +125,8 @@ HAVING COUNT(*) >= 3;
 --    result set that shows one row per film-feature combination. Display
 --    film title and the individual special feature.
 
+
+
 -- 8. Create a single result set that contains:
 --      • All film titles that have never been rented, and
 --      • All customer full names who have never made a rental.
@@ -173,3 +175,42 @@ group by ff.title ;
 --     $5.00. If any film would exceed $5.00, roll back the entire change.
 --     After the transaction, show the number of films that were actually
 --     updated.
+
+
+
+START TRANSACTION;
+
+-- Check whether any Action film would exceed $5
+SELECT COUNT(*) INTO @too_expensive
+FROM film f
+JOIN film_category fc
+    ON fc.film_id = f.film_id
+JOIN category c
+    ON c.category_id = fc.category_id
+WHERE c.name = 'Action'
+  AND f.rental_rate * 1.10 > 5.00;
+
+-- Only update if none would exceed $5
+UPDATE film
+SET rental_rate = rental_rate * 1.10
+WHERE film_id IN (
+    SELECT fc.film_id
+    FROM film_category fc
+    JOIN category c
+        ON c.category_id = fc.category_id
+    WHERE c.name = 'Action'
+)
+AND @too_expensive = 0;
+
+-- Check how many were updated
+SET @updated = ROW_COUNT();
+
+-- Commit or rollback
+IF @too_expensive = 0 THEN
+    COMMIT;
+ELSE
+    ROLLBACK;
+END IF;
+
+SELECT @updated AS films_updated;
+
