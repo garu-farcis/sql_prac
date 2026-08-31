@@ -16,7 +16,21 @@ USE sakila;
 --    only those customers whose average payment amount is higher than the
 --    overall average payment amount across all customers.
 
+create view customer_spending1 as
+select
+cu.customer_id,
+concat(cu.first_name,' ',cu.last_name) as full_name,
+sum(pay.amount) as total_amount,
+count(pay.payment_id) as num_payments
+from customer cu left join payment pay
+on pay.customer_id=cu.customer_id
+group by cu.customer_id ;
 
+select cs.customer_id,cs.full_name
+from customer_spending1 cs
+where cs.total_amount / cs.num_payments>(
+        select avg(amount) from payment
+);
 
 -- 2. Write a transaction that raises the rental_rate of every film in the
 --    “Comedy” category by $0.50, but only if the new rate does not exceed
