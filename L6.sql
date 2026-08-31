@@ -41,6 +41,32 @@ where cs.total_amount / cs.num_payments>(
 --    the number of rentals that occurred on that day. Days with zero rentals
 --    must still appear.
 
+with recursive july_month as (
+
+    select date('2005-07-01') as rent_day
+
+    union all
+
+    select date_add(rent_day, interval 1 day)
+    from july_month
+    where rent_day < '2005-07-31'
+
+)
+
+select
+    jm.rent_day,
+    count(re.rental_id) as number_of_rentals
+
+from july_month jm
+
+left join rental re
+    on date(re.rental_date) = jm.rent_day
+
+group by jm.rent_day
+
+order by jm.rent_day;
+
+
 -- 4. For each rating, display the rating, the number of films, the average
 --    length (rounded to one decimal), and a label that reads “Long Form” if
 --    the average length is greater than 120 minutes, otherwise “Standard”.
