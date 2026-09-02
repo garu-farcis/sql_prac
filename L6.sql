@@ -116,6 +116,39 @@ order by rating;
 --    Return store_id, customer full name, total paid, and the rank position
 --    inside that store. Show only the top 5 customers per store.
 
+SELECT
+    store_id,
+    customer_name,
+    total_paid,
+    rank_position
+FROM (
+    SELECT
+        store_id,
+        customer_name,
+        total_paid,
+        RANK() OVER (
+            PARTITION BY store_id
+            ORDER BY total_paid DESC
+        ) AS rank_position
+    FROM (
+        SELECT
+            c.store_id,
+            CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+            SUM(p.amount) AS total_paid
+        FROM customer c
+        JOIN payment p
+            ON c.customer_id = p.customer_id
+        GROUP BY
+            c.store_id,
+            c.customer_id,
+            c.first_name,
+            c.last_name
+    ) AS totals
+) AS ranked
+WHERE rank_position <= 5
+ORDER BY store_id, rank_position;
+
+
 -- 6. Find every pair of actors who have co-starred in at least four films.
 --    Display both actors’ full names and the number of shared films.
 --    Do not list the same pair twice.
