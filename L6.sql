@@ -99,6 +99,19 @@ order by jm.rent_day;
 --    length (rounded to one decimal), and a label that reads “Long Form” if
 --    the average length is greater than 120 minutes, otherwise “Standard”.
 
+select rating, 
+count(*) as num_films,
+round(avg(length),1) as avg_len,
+(
+    case
+    when avg(length)>120 then 'Long Form'
+    else 'Standard'
+    end
+) as label
+from film 
+group by rating
+order by rating;
+
 -- 5. Rank customers within each store by total amount paid (highest first).
 --    Return store_id, customer full name, total paid, and the rank position
 --    inside that store. Show only the top 5 customers per store.
