@@ -134,17 +134,16 @@ HAVING COUNT(*) >= 3;
 
 
 select ff.title AS name,
-    'Unrented Film' AS type
+CASE WHEN r.rental_id IS NULL THEN 'Unrented Film' END AS type
 from film ff 
 left join inventory inv
 on inv.film_id=ff.film_id
 left join rental r
 on r.inventory_id=inv.inventory_id
 where r.rental_date is null
-group by ff.title
 union all
 select concat(cu.first_name,' ',cu.last_name) as name,
-'Inactive Customer' AS type
+CASE WHEN re.rental_id IS NULL THEN 'Inactive Customer' END AS type
 from customer cu left join rental re
 on re.customer_id=cu.customer_id
 where re.rental_id is null;

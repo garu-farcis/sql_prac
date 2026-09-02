@@ -153,6 +153,29 @@ ORDER BY store_id, rank_position;
 --    Display both actors’ full names and the number of shared films.
 --    Do not list the same pair twice.
 
+SELECT
+    CONCAT(a1.first_name, ' ', a1.last_name) AS actor1,
+    CONCAT(a2.first_name, ' ', a2.last_name) AS actor2,
+    COUNT(*) AS shared_films
+FROM film_actor fa1
+INNER JOIN film_actor fa2
+    ON fa1.film_id = fa2.film_id
+   AND fa1.actor_id < fa2.actor_id
+INNER JOIN actor a1
+    ON fa1.actor_id = a1.actor_id
+INNER JOIN actor a2
+    ON fa2.actor_id = a2.actor_id
+GROUP BY
+    a1.actor_id,
+    a1.first_name,
+    a1.last_name,
+    a2.actor_id,
+    a2.first_name,
+    a2.last_name
+HAVING COUNT(*) >= 4
+ORDER BY shared_films DESC;
+
+
 -- 7. Transform the special_features column into a normalized result set that
 --    contains one row for each individual feature of each film. Show film
 --    title and the single special feature.
@@ -161,7 +184,20 @@ ORDER BY store_id, rank_position;
 --      • titles of films that have never been rented, labeled “Unrented Film”
 --      • full names of customers who have never rented anything, labeled
 --        “Inactive Customer”.
-
+select ff.title AS name,
+CASE WHEN r.rental_id IS NULL THEN 'Unrented Film' END AS type
+from film ff 
+left join inventory inv
+on inv.film_id=ff.film_id
+left join rental r
+on r.inventory_id=inv.inventory_id
+where r.rental_date is null
+union all
+select concat(cu.first_name,' ',cu.last_name) as name,
+CASE WHEN re.rental_id IS NULL THEN 'Inactive Customer' END AS type
+from customer cu left join rental re
+on re.customer_id=cu.customer_id
+where re.rental_id is null;
 -- 9. For every film, show its title, the total number of inventory copies
 --    across all stores, and a stock status:
 --      “Out of Stock” when count = 0,
