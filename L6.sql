@@ -37,6 +37,10 @@ where cs.total_amount / cs.num_payments>(
 --    $4.99. If any film would exceed that limit, the entire transaction must
 --    be rolled back. Afterward, report how many films were actually updated.
 
+
+start transaction;
+
+
 -- 3. Generate a complete list of every calendar day in July 2005 together with
 --    the number of rentals that occurred on that day. Days with zero rentals
 --    must still appear.
