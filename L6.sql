@@ -39,6 +39,30 @@ where cs.total_amount / cs.num_payments>(
 
 
 start transaction;
+select count(*) into @too_ex
+from film ff left join film_category fc
+on fc.film_id=ff.film_id
+inner join category cat
+on cat.category_id=fc.category_id
+where cat.name='Comedy' and
+ff.rental_rate + 0.50 <=4.99;
+update film f
+inner join film_category fcf
+    on f.film_id=fcf.film_id
+    inner join category ca
+    on ca.category_id=fcf.category_id
+    set rental_rate=rental_rate+0.50
+    where ca.name='Comedy'
+and @too_ex=0;
+set @updated= row_count();
+if @too_ex =0 then 
+    commit; 
+else 
+    ROLLBACK; 
+    SET @updated = 0;
+end if;
+
+SELECT @updated AS films_updated;
 
 
 -- 3. Generate a complete list of every calendar day in July 2005 together with
