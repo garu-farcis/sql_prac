@@ -221,6 +221,7 @@ group by  inv.film_id,ff.title;
 --     average number of distinct categories rented by all customers. Show
 --     customer full name and the number of distinct categories they have
 --     rented from.
+select
 
 -- 11. Create a view called monthly_revenue that aggregates total payment
 --     amount by year and month. Then write a query against the view that
