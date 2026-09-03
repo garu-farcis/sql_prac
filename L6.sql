@@ -204,6 +204,19 @@ where re.rental_id is null;
 --      “Low Stock” when count is between 1 and 4,
 --      “In Stock” when count is 5 or more.
 
+select ff.title, 
+count(inv.inventory_id) as inven_copies,
+(
+    case
+    when count(inv.inventory_id)=0 then 'Out of Stock'
+    when count(inv.inventory_id) between 1 and 4 then 'Low Stock'
+    else 'in stock'
+    end
+) as status
+from film ff left join inventory inv
+on ff.film_id=inv.film_id
+group by  inv.film_id,ff.title;
+
 -- 10. List every customer who has rented films from more categories than the
 --     average number of distinct categories rented by all customers. Show
 --     customer full name and the number of distinct categories they have
