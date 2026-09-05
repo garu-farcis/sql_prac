@@ -222,6 +222,7 @@ group by  inv.film_id,ff.title;
 --     customer full name and the number of distinct categories they have
 --     rented from.
 select count(*) as num_rentals
+from 
 
 -- 11. Create a view called monthly_revenue that aggregates total payment
 --     amount by year and month. Then write a query against the view that
