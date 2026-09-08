@@ -221,8 +221,32 @@ group by  inv.film_id,ff.title;
 --     average number of distinct categories rented by all customers. Show
 --     customer full name and the number of distinct categories they have
 --     rented from.
-select count(*) as num_rentals
-from 
+select concat(cu.first_name,' ',cu.last_name) as full_name,
+count(distinct(cat.category_id)) as cat_name,
+count(*) as num_rentals
+from customer cu left join rental re
+on cu.customer_id=re.customer_id
+inner join inventory inv
+on inv.inventory_id=re.inventory_id
+inner join film_category fc
+on fc.film_id=inv.film_id
+inner join category cat
+on cat.category_id=fc.category_id
+group by cu.customer_id,cu.first_name,cu.last_name
+having count(distinct cat.category_id)>( 
+    select avg(category_count)
+    from 
+    (select count(distinct( cat2.category_id)) as  category_count
+    from customer cc left join rental r
+    on cc.customer_id=r.customer_id
+    inner join inventory invv
+    on invv.inventory_id=r.inventory_id
+    inner join film_category fcc
+    on fcc.film_id=invv.film_id
+    inner join category cat2
+    on cat2.category_id=fcc.category_id
+    group by cc.customer_id
+) as customer_categories);
 
 -- 11. Create a view called monthly_revenue that aggregates total payment
 --     amount by year and month. Then write a query against the view that
