@@ -1,0 +1,3 @@
+-- Active: 1787069770352@@localhost@3306@sakila
+-- 1. For every payment, show the payment_id, customer full name, amount, and
+--    the running total of that customer’s payments ordered by payment_date.

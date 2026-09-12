@@ -252,6 +252,21 @@ having count(distinct cat.category_id)>(
 --     amount by year and month. Then write a query against the view that
 --     returns only those months whose revenue is higher than the previous
 --     month’s revenue.
+create view monthly_revenue as
+select sum(amount) as total_payment_yearly_monthly,
+year(payment_date),
+month(payment_date),
+customer_id
+from payment 
+group by year(payment_date),month(payment_date);
+
+select m1.yea_moth,m1.total_payment_yearly_monthly
+from monthly_revenue m1 inner join monthly_revenue m2
+on month(m1.yea_moth)=month(m2.yea_moth)
+and m1.yea_moth>m2.yea_moth
+where m1.total_payment_yearly_monthly>m2.total_payment_yearly_monthly;
+
+
 
 -- 12. Inside a single transaction, insert a new rental for customer_id 10
 --     of an available copy of “ACADEMY DINOSAUR” from store 1, and
