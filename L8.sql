@@ -24,3 +24,18 @@ left join rental re
 on inv.inventory_id=re.inventory_id
 group by ff.film_id,ff.title
 order by ranking;
+
+
+-- 3. For each customer, show their full name, the date of each rental they
+--    made, and the number of days that passed since their previous rental.
+--    The first rental for each customer should show NULL for the gap.
+
+select concat(cu.first_name,' ',cu.last_name) as full_name,
+re.rental_date,
+re.rental_date -lag(re.rental_date) over( PARTITION BY cu.customer_id
+    order by re.rental_date desc
+) as days_passed
+from customer cu left join rental re
+on cu.customer_id=re.rental_id
+ORDER BY cu.customer_id, re.rental_date ASC;
+
