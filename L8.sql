@@ -39,3 +39,18 @@ from customer cu left join rental re
 on cu.customer_id=re.rental_id
 ORDER BY cu.customer_id, re.rental_date ASC;
 
+-- 4. Divide all customers into four equal groups based on total amount paid
+--    (highest spenders in group 1). Display customer full name, total paid,
+--    and the group number.
+
+select concat(cu.first_name,' ',cu.last_name) as full_name,
+sum(pa.amount) as total_paid,
+ntile(4) over (
+    order by sum(pa.amount) desc
+) as group_number
+from customer cu left join payment pa
+on cu.customer_id=pa.customer_id
+group by cu.first_name,cu.last_name;
+
+-- 5. For every film, show its title, length, and the difference between its
+--    length and the average length of all films that share the same rating.
