@@ -1,9 +1,9 @@
-================================================================================
+/*================================================================================
 5 ADVANCED INTERVIEW-STYLE PRACTICE QUESTIONS
 MySQL + Sakila Sample Database
 Focus: Advanced Analytics • Window Functions • Complex Logic
 (Questions only – no solution hints)
-================================================================================
+================================================================================*/
 
 USE sakila;
 
@@ -12,6 +12,37 @@ USE sakila;
 --    the customers by the number of distinct films they have rented.
 --    Display customer full name, total spent, segment number, distinct film
 --    count, and the rank inside the segment.
+
+with dist_films as (
+    select distinct(ff.film_id) as distinct_films,
+    cc.customer_id as customer_key
+    from customer cc left join rental re
+    on cc.customer_id=re.customer_id
+    left join inventory inv
+    on inv.inventory_id=re.inventory_id
+    left join film ff
+    on ff.film_id=inv.film_id
+    group by ff.film_id
+),
+ cust_info as (
+    select concat(cc.first_name,' ',cc.last_name) as full_name,
+    sum(pay.amount) as total_spent,
+    cc.customer_id as cust_key,
+    ntile(5) over (partition by cc.customer_id order by sum(pay.amount)) as segment
+    from customer cc left join payment pay
+    on cc.customer_id=pay.customer_id
+    group by cc.first_name,cc.last_name
+
+)
+
+select df.distinct_films,
+ci.full_name,
+ci.total_spent,
+ci.segment,
+rank() over (partition by ci.segment order by df.distinct_films) as ranking
+from cust_info ci left join dist_films df
+on ci.cust_key=df.customer_key;
+
 
 -- 2. Identify every rental that is more than two standard deviations above
 --    the average payment amount for that customer. Show customer full name,
