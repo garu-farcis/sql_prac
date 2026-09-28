@@ -49,6 +49,8 @@ on ci.cust_key=df.customer_key;
 --    payment amount, payment date, the customer’s average payment, and the
 --    standard deviation of their payments.
 
+
+
 -- 3. Build a month-over-month retention report for 2005: for each month show
 --    the number of customers who rented in that month, the number who also
 --    rented in the previous month, and the retention percentage.
